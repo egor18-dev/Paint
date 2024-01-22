@@ -79,7 +79,7 @@ class PhotoDAW {
                 });
             });
         });
-
+        
         this.canvas.addEventListener('mousedown', (e) => {
             this.isClick = true;
 
@@ -144,7 +144,6 @@ class PhotoDAW {
         if (repeat) this.redraw();
         this.context.setLineDash(background ? [0, 0] : [3, 8]);
         this.context.strokeStyle = color;  
-        this.context.lineWidth = this.lineWidth; 
         if (background) this.context.fillStyle = color;
         this.context.rect(adjustedStartX, adjustedStartY, (adjustedEndX - adjustedStartX), (adjustedEndY - adjustedStartY));
 
@@ -187,13 +186,19 @@ class PhotoDAW {
 
     redraw() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
+    
         this.elements.forEach((elem) => {
-            if (elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.color, elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
-            else if (elem.type.toLowerCase() == 'linea') this.drawLine(elem.color, elem.startX, elem.startY, elem.event, true, false)
-            else if (elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.color, elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
-            else if (elem.type.toLowerCase() == 'punts') this.drawPoint(elem.lineWidth, elem.color, elem.startX, elem.startY);
+            if (elem.type.toLowerCase() == 'rectangle') {
+                this.drawRect(elem.color, elem.startX, elem.startY, elem.clientX, elem.clientY, true, false);
+            } else if (elem.type.toLowerCase() == 'linea') {
+                this.drawLine(elem.color, elem.startX, elem.startY, elem.event, true, false);
+            } else if (elem.type.toLowerCase() == 'cercle') {
+                this.drawCircle(elem.color, elem.startX, elem.startY, elem.clientX, elem.clientY, true, false);
+            } else if (elem.type.toLowerCase() == 'punts') {
+                this.drawPoint(elem.lineWidth, elem.color, elem.startX, elem.startY);
+            }
         });
     }
+    
 
 }
