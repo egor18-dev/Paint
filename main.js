@@ -102,14 +102,14 @@ class PhotoDAW {
 
         this.canvas.addEventListener('mousemove', (e) => {
 
-            if(this.option.toLowerCase() == 'linea' && this.isClick) this.drawLine(this.x, this.y, e);
+            if(this.option.toLowerCase() == 'linea' && this.isClick) this.drawLine(this.x, this.y, e, false);
             if(this.option.toLowerCase() == 'rectangle' && this.isClick) this.drawRect(this.x, this.y, e, false);
             if(this.option.toLowerCase() == 'cercle' && this.isClick) this.drawCircle(this.x, this.y, e);
         });
 
     }
 
-    drawLine(startX, startY, event) {
+    drawLine(startX, startY, event, background) {
         const canvasRect = this.canvas.getBoundingClientRect();
         const mouseX = event.clientX - canvasRect.left;
         const mouseY = event.clientY - canvasRect.top;
@@ -117,7 +117,7 @@ class PhotoDAW {
         this.context.beginPath();
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.moveTo(startX, startY);
-        this.context.setLineDash([3, 8]);
+        this.context.setLineDash(background ? [0, 0] :  [3, 8]);
         this.context.lineTo(mouseX, mouseY);
         this.context.stroke();
 
@@ -169,6 +169,7 @@ class PhotoDAW {
 
         this.elements.forEach((elem) => {
             if(elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.startX, elem.startY, elem.event, true)
+            if(elem.type.toLowerCase() == 'linea') this.drawLine(elem.startX, elem.startY, elem.event, true)
         });
     }
 
