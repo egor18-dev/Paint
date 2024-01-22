@@ -111,7 +111,7 @@ class PhotoDAW {
 
             if(this.option.toLowerCase() == 'linea' && this.isClick) this.drawLine(this.x, this.y, e, false, true);
             if(this.option.toLowerCase() == 'rectangle' && this.isClick) this.drawRect(this.x, this.y, e.clientX, e.clientY, false, true);
-            if(this.option.toLowerCase() == 'cercle' && this.isClick) this.drawCircle(this.x, this.y, e, false, true);
+            if(this.option.toLowerCase() == 'cercle' && this.isClick) this.drawCircle(this.x, this.y, e.clientX, e.clientY, false, true);
         });
 
     }
