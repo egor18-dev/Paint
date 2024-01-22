@@ -97,7 +97,7 @@ class PhotoDAW {
             this.x = e.x;
             this.y = e.y;
 
-            if (this.option.toLowerCase() == 'punts') this.drawPoint(this.x, this.y);
+            if (this.option.toLowerCase() == 'punts') this.drawPoint(this.strokeStyle, this.x, this.y);
         });
 
         this.canvas.addEventListener('mouseup', () => {
@@ -163,7 +163,7 @@ class PhotoDAW {
         else this.context.fill();
     }
 
-    drawPoint(startX, startY) {
+    drawPoint(color, startX, startY) {
         const canvasRect = this.canvas.getBoundingClientRect();
         const adjustedStartX = startX - canvasRect.left;
         const adjustedStartY = startY - canvasRect.top;
@@ -171,7 +171,7 @@ class PhotoDAW {
         this.context.beginPath();
         this.context.arc(adjustedStartX, adjustedStartY, this.radious, 0, Math.PI * 2);
         this.context.setLineDash([0, 0]);
-        this.context.fillStyle = this.strokeStyle; 
+        this.context.fillStyle = color; 
         this.context.fill();
     }
 
@@ -202,7 +202,7 @@ class PhotoDAW {
             if (elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.color, elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
             else if (elem.type.toLowerCase() == 'linea') this.drawLine(elem.color, elem.startX, elem.startY, elem.event, true, false)
             else if (elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.color, elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
-            else if (elem.type.toLowerCase() == 'punts') this.drawPoint(elem.startX, elem.startY);
+            else if (elem.type.toLowerCase() == 'punts') this.drawPoint(elem.color, elem.startX, elem.startY);
         });
     }
 
