@@ -5,7 +5,7 @@ class PhotoDAW {
         const divName = document.getElementById(id);
         const body = document.querySelector('body');
 
-        this.option = "Linia";
+        this.option = "Linea";
 
         this.createElement('canvas', 'canvas', body);
 
@@ -169,11 +169,11 @@ class PhotoDAW {
     
         this.context.beginPath();
         this.context.setLineDash(background ? [0, 0] : [3, 8]);
+        this.context.strokeStyle = "#000";
         if(repeat) this.redraw();
-        this.context.arc(adjustedStartX, adjustedStartY, radius, 0, 2 * Math.PI);
+        this.context.arc(adjustedStartX, adjustedStartY, radius, Math.PI * 2, 0);
         
-        if(!background) this.context.stroke();
-        else this.context.fill(); 
+        this.context.fill();
     }
 
     redraw() {
@@ -181,8 +181,8 @@ class PhotoDAW {
 
         this.elements.forEach((elem) => {
             if(elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
-            if(elem.type.toLowerCase() == 'linea') this.drawLine(elem.startX, elem.startY, elem.event, true, false)
-            if(elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
+            else if(elem.type.toLowerCase() == 'linea') this.drawLine(elem.startX, elem.startY, elem.event, true, false)
+            else if(elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
         });
     }
 
