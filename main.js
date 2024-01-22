@@ -157,22 +157,23 @@ class PhotoDAW {
         this.context.fill();
     }
 
-    drawCircle(startX, startY, event, background, repeat) {
+    drawCircle(startX, startY, endX, endY, background, repeat) {
         const canvasRect = this.canvas.getBoundingClientRect();
-        const mouseX = event.clientX - canvasRect.left;
-        const mouseY = event.clientY - canvasRect.top;
-    
-        const radius = Math.sqrt(Math.pow(mouseX - this.x, 2) + Math.pow(mouseY - this.y, 2));
+
+        const adjustedStartX = startX - canvasRect.left;
+        const adjustedStartY = startY - canvasRect.top;
+        const adjustedEndX = endX - canvasRect.left;
+        const adjustedEndY = endY - canvasRect.top;
+
+        const radius = Math.sqrt(Math.pow(adjustedEndX - adjustedStartX, 2) + Math.pow(adjustedEndY - adjustedStartY, 2));
     
         this.context.beginPath();
         this.context.setLineDash(background ? [0, 0] : [3, 8]);
         if(repeat) this.redraw();
-        this.context.arc(startX, startY, radius, 0, 2 * Math.PI);
+        this.context.arc(adjustedStartX, adjustedStartY, radius, 0, 2 * Math.PI);
         
         if(!background) this.context.stroke();
         else this.context.fill(); 
-
-        this.event = event;
     }
 
     redraw() {
@@ -181,7 +182,7 @@ class PhotoDAW {
         this.elements.forEach((elem) => {
             if(elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
             if(elem.type.toLowerCase() == 'linea') this.drawLine(elem.startX, elem.startY, elem.event, true, false)
-            if(elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.startX, elem.startY, elem.event, true, false)
+            if(elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
         });
     }
 
