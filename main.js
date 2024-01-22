@@ -103,7 +103,7 @@ class PhotoDAW {
         this.canvas.addEventListener('mousemove', (e) => {
 
             if(this.option.toLowerCase() == 'linea' && this.isClick) this.drawLine(this.x, this.y, e);
-            if(this.option.toLowerCase() == 'rectangle' && this.isClick) this.drawRect(this.x, this.y, e);
+            if(this.option.toLowerCase() == 'rectangle' && this.isClick) this.drawRect(this.x, this.y, e, false);
             if(this.option.toLowerCase() == 'cercle' && this.isClick) this.drawCircle(this.x, this.y, e);
         });
 
@@ -124,17 +124,19 @@ class PhotoDAW {
         this.event = event;
     }
 
-    drawRect(startX, startY, event) {
+    drawRect(startX, startY, event, background) {
         const canvasRect = this.canvas.getBoundingClientRect();
         const mouseX = event.clientX - canvasRect.left;
         const mouseY = event.clientY - canvasRect.top;
     
         this.context.beginPath();
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.context.setLineDash([3, 8]);
+        this.context.setLineDash(background ? [0, 0] : [3, 8]);
+        if(background) this.context.strokeStyle = "#000000";
         this.context.rect(startX, startY, (mouseX - this.x), (mouseY - this.y));
-        this.context.stroke();
-
+        
+        if(!background)this.context.stroke();
+        else this.context.fill();
         this.event = event;
     }
 
@@ -166,9 +168,7 @@ class PhotoDAW {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.elements.forEach((elem) => {
-            console.log(elem.event);
-
-
+            if(elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.startX, elem.startY, elem.event, true)
         });
     }
 
