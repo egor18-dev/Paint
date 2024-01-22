@@ -16,8 +16,10 @@ class PhotoDAW {
 
         this.x = 0;
         this.y = 0;
+        this.clientX = 0;
+        this.clientY = 0;
         this.event = undefined;
-        this.radious = 20;
+        this.radious = 5;
         this.isClick = false;
 
         this.createElement('p', 'canvas', body);
@@ -94,6 +96,8 @@ class PhotoDAW {
                 type: this.option,
                 startX: this.x,
                 startY: this.y,
+                clientX: this.clientX,
+                clientY: this.clientY,
                 event: this.event
             });
 
@@ -102,20 +106,23 @@ class PhotoDAW {
 
         this.canvas.addEventListener('mousemove', (e) => {
 
-            if(this.option.toLowerCase() == 'linea' && this.isClick) this.drawLine(this.x, this.y, e, false);
-            if(this.option.toLowerCase() == 'rectangle' && this.isClick) this.drawRect(this.x, this.y, e, false);
-            if(this.option.toLowerCase() == 'cercle' && this.isClick) this.drawCircle(this.x, this.y, e, false);
+            this.clientX = e.clientX;
+            this.clientY = e.clientY;
+
+            if(this.option.toLowerCase() == 'linea' && this.isClick) this.drawLine(this.x, this.y, e, false, true);
+            if(this.option.toLowerCase() == 'rectangle' && this.isClick) this.drawRect(this.x, this.y, e.clientX, e.clientY, false, true);
+            if(this.option.toLowerCase() == 'cercle' && this.isClick) this.drawCircle(this.x, this.y, e, false, true);
         });
 
     }
 
-    drawLine(startX, startY, event, background) {
+    drawLine(startX, startY, event, background, repeat) {
         const canvasRect = this.canvas.getBoundingClientRect();
         const mouseX = event.clientX - canvasRect.left;
         const mouseY = event.clientY - canvasRect.top;
     
         this.context.beginPath();
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if(repeat) this.redraw();
         this.context.moveTo(startX, startY);
         this.context.setLineDash(background ? [0, 0] :  [3, 8]);
         this.context.lineTo(mouseX, mouseY);
@@ -124,21 +131,23 @@ class PhotoDAW {
         this.event = event;
     }
 
-    drawRect(startX, startY, event, background) {
+    drawRect(startX, startY, endX, endY, background, repeat) {
         const canvasRect = this.canvas.getBoundingClientRect();
-        const mouseX = event.clientX - canvasRect.left;
-        const mouseY = event.clientY - canvasRect.top;
+        const adjustedStartX = startX - canvasRect.left;
+        const adjustedStartY = startY - canvasRect.top;
+        const adjustedEndX = endX - canvasRect.left;
+        const adjustedEndY = endY - canvasRect.top;
     
         this.context.beginPath();
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if (repeat) this.redraw();
         this.context.setLineDash(background ? [0, 0] : [3, 8]);
-        if(background) this.context.strokeStyle = "#000000";
-        this.context.rect(startX, startY, (mouseX - this.x), (mouseY - this.y));
-        
-        if(!background)this.context.stroke();
+        if (background) this.context.strokeStyle = "#000000";
+        this.context.rect(adjustedStartX, adjustedStartY, (adjustedEndX - adjustedStartX), (adjustedEndY - adjustedStartY));
+    
+        if (!background) this.context.stroke();
         else this.context.fill();
-        this.event = event;
     }
+    
 
     drawPoint(){
         this.context.beginPath();
@@ -148,7 +157,7 @@ class PhotoDAW {
         this.context.fill();
     }
 
-    drawCircle(startX, startY, event, background) {
+    drawCircle(startX, startY, event, background, repeat) {
         const canvasRect = this.canvas.getBoundingClientRect();
         const mouseX = event.clientX - canvasRect.left;
         const mouseY = event.clientY - canvasRect.top;
@@ -157,7 +166,7 @@ class PhotoDAW {
     
         this.context.beginPath();
         this.context.setLineDash(background ? [0, 0] : [3, 8]);
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if(repeat) this.redraw();
         this.context.arc(startX, startY, radius, 0, 2 * Math.PI);
         
         if(!background) this.context.stroke();
@@ -170,9 +179,9 @@ class PhotoDAW {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.elements.forEach((elem) => {
-            if(elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.startX, elem.startY, elem.event, true)
-            if(elem.type.toLowerCase() == 'linea') this.drawLine(elem.startX, elem.startY, elem.event, true)
-            if(elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.startX, elem.startY, elem.event, true)
+            if(elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
+            if(elem.type.toLowerCase() == 'linea') this.drawLine(elem.startX, elem.startY, elem.event, true, false)
+            if(elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.startX, elem.startY, elem.event, true, false)
         });
     }
 
