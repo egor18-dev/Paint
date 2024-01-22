@@ -104,7 +104,7 @@ class PhotoDAW {
 
             if(this.option.toLowerCase() == 'linea' && this.isClick) this.drawLine(this.x, this.y, e, false);
             if(this.option.toLowerCase() == 'rectangle' && this.isClick) this.drawRect(this.x, this.y, e, false);
-            if(this.option.toLowerCase() == 'cercle' && this.isClick) this.drawCircle(this.x, this.y, e);
+            if(this.option.toLowerCase() == 'cercle' && this.isClick) this.drawCircle(this.x, this.y, e, false);
         });
 
     }
@@ -148,7 +148,7 @@ class PhotoDAW {
         this.context.fill();
     }
 
-    drawCircle(startX, startY, event) {
+    drawCircle(startX, startY, event, background) {
         const canvasRect = this.canvas.getBoundingClientRect();
         const mouseX = event.clientX - canvasRect.left;
         const mouseY = event.clientY - canvasRect.top;
@@ -156,10 +156,12 @@ class PhotoDAW {
         const radius = Math.sqrt(Math.pow(mouseX - this.x, 2) + Math.pow(mouseY - this.y, 2));
     
         this.context.beginPath();
-        this.context.setLineDash([3, 8]);
+        this.context.setLineDash(background ? [0, 0] : [3, 8]);
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.context.arc(startX, startY, radius, 0, 2 * Math.PI);
-        this.context.stroke();
+        
+        if(!background) this.context.stroke();
+        else this.context.fill(); 
 
         this.event = event;
     }
@@ -170,6 +172,7 @@ class PhotoDAW {
         this.elements.forEach((elem) => {
             if(elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.startX, elem.startY, elem.event, true)
             if(elem.type.toLowerCase() == 'linea') this.drawLine(elem.startX, elem.startY, elem.event, true)
+            if(elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.startX, elem.startY, elem.event, true)
         });
     }
 
