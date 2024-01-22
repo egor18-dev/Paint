@@ -5,6 +5,8 @@ class PhotoDAW {
         const body = document.querySelector('body');
 
         this.option = "Linea";
+        this.strokeStyle = "#000000";  
+        this.lineWidth = 2; 
 
         this.createElement('canvas', 'canvas', body);
 
@@ -22,7 +24,6 @@ class PhotoDAW {
         this.isClick = false;
 
         this.createElement('p', 'canvas', body);
-        
         this.changeText();
 
         this.createElement('div', 'buttons', body);
@@ -34,9 +35,9 @@ class PhotoDAW {
         this.createElement('button', 'btn active', this.buttons, 'Linea');
         this.createElement('button', 'btn', this.buttons, 'Cercle');
         this.createElement('button', 'btn', this.buttons, 'Netejar');
-        this.createElement('input', 'input', this.buttons, '', 'color');
+        this.createElement('input', 'input', this.buttons, '', 'color', 'colorPicker'); 
         this.createElement('span', 'text', this.buttons, ' Gruix: ', '');
-        this.createElement('input', 'input', this.buttons, '', 'range');
+        this.createElement('input', 'input', this.buttons, '', 'range', 'thickness');  
 
         this.listeners();
 
@@ -48,30 +49,38 @@ class PhotoDAW {
         text.innerHTML = `OnClick: ${this.option}`;
     }
 
-    createElement(element, classElement, elementParent, textElement = "", elementType = ""){
-
+    createElement(element, classElement, elementParent, textElement = "", elementType = "", elementId = "") {
         const tempElement = document.createElement(element);
         tempElement.classList = classElement;
         tempElement.innerHTML = textElement;
 
-        if(element = 'input'){
+        if (element === 'input') {
             tempElement.type = elementType;
+            tempElement.id = elementId;  
         }
 
         elementParent.appendChild(tempElement);
-
     }
 
-    listeners(){
+    listeners() {
         const btns = document.querySelectorAll('button');
+        const colorPicker = document.getElementById('colorPicker');
+        const thicknessInput = document.getElementById('thickness');
+
+        colorPicker.addEventListener('input', (e) => {
+            this.strokeStyle = e.target.value; 
+        });
+
+        thicknessInput.addEventListener('input', (e) => {
+            this.lineWidth = e.target.value;  
+        });
 
         btns.forEach((btn, index) => {
-
             btn.addEventListener('click', () => {
                 this.option = btn.textContent;
                 this.changeText();
 
-                if(this.option.toLowerCase() == "netejar"){
+                if (this.option.toLowerCase() == "netejar") {
                     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
                     this.elements = [];
                 }
@@ -79,17 +88,16 @@ class PhotoDAW {
                 btns.forEach((tempBtn, tempIndex) => {
                     tempBtn.classList = index == tempIndex ? 'btn active' : 'btn';
                 });
-            }); 
+            });
         });
 
         this.canvas.addEventListener('mousedown', (e) => {
-
             this.isClick = true;
 
             this.x = e.x;
             this.y = e.y;
 
-            if(this.option.toLowerCase() == 'punts') this.drawPoint(this.x, this.y);
+            if (this.option.toLowerCase() == 'punts') this.drawPoint(this.x, this.y);
         });
 
         this.canvas.addEventListener('mouseup', () => {
@@ -101,58 +109,61 @@ class PhotoDAW {
                 startY: this.y,
                 clientX: this.clientX,
                 clientY: this.clientY,
-                event: this.event
+                event: this.event,
+                color: this.strokeStyle,  
+                lineWidth: this.lineWidth  
             });
 
             this.redraw();
         });
 
         this.canvas.addEventListener('mousemove', (e) => {
-
             this.clientX = e.clientX;
             this.clientY = e.clientY;
 
-            if(this.option.toLowerCase() == 'linea' && this.isClick) this.drawLine(this.x, this.y, e, false, true);
-            if(this.option.toLowerCase() == 'rectangle' && this.isClick) this.drawRect(this.x, this.y, e.clientX, e.clientY, false, true);
-            if(this.option.toLowerCase() == 'cercle' && this.isClick) this.drawCircle(this.x, this.y, e.clientX, e.clientY, false, true);
+            if (this.option.toLowerCase() == 'linea' && this.isClick) this.drawLine(this.strokeStyle, this.x, this.y, e, false, true);
+            if (this.option.toLowerCase() == 'rectangle' && this.isClick) this.drawRect(this.strokeStyle, this.x, this.y, e.clientX, e.clientY, false, true);
+            if (this.option.toLowerCase() == 'cercle' && this.isClick) this.drawCircle(this.x, this.y, e.clientX, e.clientY, false, true);
         });
-
     }
 
-    drawLine(startX, startY, event, background, repeat) {
+    drawLine(color, startX, startY, event, background, repeat) {
         const canvasRect = this.canvas.getBoundingClientRect();
         const mouseX = event.clientX - canvasRect.left;
         const mouseY = event.clientY - canvasRect.top;
-    
+
         this.context.beginPath();
-        if(repeat) this.redraw();
+        if (repeat) this.redraw();
         this.context.moveTo(startX, startY);
-        this.context.setLineDash(background ? [0, 0] :  [3, 8]);
+        this.context.setLineDash(background ? [0, 0] : [3, 8]);
+        this.context.strokeStyle = color;  
+        this.context.lineWidth = this.lineWidth;
         this.context.lineTo(mouseX, mouseY);
         this.context.stroke();
 
         this.event = event;
     }
 
-    drawRect(startX, startY, endX, endY, background, repeat) {
+    drawRect(color, startX, startY, endX, endY, background, repeat) {
         const canvasRect = this.canvas.getBoundingClientRect();
         const adjustedStartX = startX - canvasRect.left;
         const adjustedStartY = startY - canvasRect.top;
         const adjustedEndX = endX - canvasRect.left;
         const adjustedEndY = endY - canvasRect.top;
-    
+
         this.context.beginPath();
         if (repeat) this.redraw();
         this.context.setLineDash(background ? [0, 0] : [3, 8]);
-        if (background) this.context.strokeStyle = "#000000";
+        this.context.strokeStyle = color;  
+        this.context.lineWidth = this.lineWidth; 
+        if (background) this.context.fillStyle = color;
         this.context.rect(adjustedStartX, adjustedStartY, (adjustedEndX - adjustedStartX), (adjustedEndY - adjustedStartY));
-    
+
         if (!background) this.context.stroke();
         else this.context.fill();
     }
-    
 
-    drawPoint(startX, startY){
+    drawPoint(startX, startY) {
         const canvasRect = this.canvas.getBoundingClientRect();
         const adjustedStartX = startX - canvasRect.left;
         const adjustedStartY = startY - canvasRect.top;
@@ -160,7 +171,7 @@ class PhotoDAW {
         this.context.beginPath();
         this.context.arc(adjustedStartX, adjustedStartY, this.radious, 0, Math.PI * 2);
         this.context.setLineDash([0, 0]);
-        this.context.fillStyle = "#000";
+        this.context.fillStyle = this.strokeStyle; 
         this.context.fill();
     }
 
@@ -173,13 +184,14 @@ class PhotoDAW {
         const adjustedEndY = endY - canvasRect.top;
 
         const radius = Math.sqrt(Math.pow(adjustedEndX - adjustedStartX, 2) + Math.pow(adjustedEndY - adjustedStartY, 2));
-    
+
         this.context.beginPath();
         this.context.setLineDash(background ? [0, 0] : [3, 8]);
-        this.context.strokeStyle = "#000";
-        if(repeat) this.redraw();
+        this.context.strokeStyle = this.strokeStyle;
+        this.context.lineWidth = this.lineWidth;  
+        if (repeat) this.redraw();
         this.context.arc(adjustedStartX, adjustedStartY, radius, Math.PI * 2, 0);
-        
+
         this.context.fill();
     }
 
@@ -187,10 +199,10 @@ class PhotoDAW {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.elements.forEach((elem) => {
-            if(elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
-            else if(elem.type.toLowerCase() == 'linea') this.drawLine(elem.startX, elem.startY, elem.event, true, false)
-            else if(elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
-            else if(elem.type.toLowerCase() == 'punts') this.drawPoint(elem.startX, elem.startY);
+            if (elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.color, elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
+            else if (elem.type.toLowerCase() == 'linea') this.drawLine(elem.color, elem.startX, elem.startY, elem.event, true, false)
+            else if (elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.color, elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
+            else if (elem.type.toLowerCase() == 'punts') this.drawPoint(elem.startX, elem.startY);
         });
     }
 
