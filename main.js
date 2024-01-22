@@ -1,4 +1,3 @@
-
 class PhotoDAW {
 
     constructor(id) {
@@ -85,7 +84,7 @@ class PhotoDAW {
             this.x = e.x;
             this.y = e.y;
 
-            if(this.option.toLowerCase() == 'punts') this.drawPoint();
+            if(this.option.toLowerCase() == 'punts') this.drawPoint(this.x, this.y);
 
         });
 
@@ -149,10 +148,10 @@ class PhotoDAW {
     }
     
 
-    drawPoint(){
+    drawPoint(x, y){
         this.context.beginPath();
         this.context.arc(this.x, this.y, this.radious, 0, Math.PI * 2);
-        this.context.setLineDash([0, 0]);
+        this.context.setLineDash([x, y]);
         this.context.fillStyle = "#000";
         this.context.fill();
     }
@@ -183,6 +182,7 @@ class PhotoDAW {
             if(elem.type.toLowerCase() == 'rectangle') this.drawRect(elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
             else if(elem.type.toLowerCase() == 'linea') this.drawLine(elem.startX, elem.startY, elem.event, true, false)
             else if(elem.type.toLowerCase() == 'cercle') this.drawCircle(elem.startX, elem.startY, elem.clientX, elem.clientY, true, false)
+            else if(elem.type.toLowerCase() == 'punts') this.drawPoint(elem.startX, elem.startY);
         });
     }
 
