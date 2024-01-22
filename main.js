@@ -126,7 +126,7 @@ class PhotoDAW {
         this.context.moveTo(startX, startY);
         this.context.setLineDash(background ? [0, 0] : [3, 8]);
         this.context.strokeStyle = color;  
-        this.context.lineWidth = this.lineWidth;
+        this.context.lineWidth = 2;
         this.context.lineTo(mouseX, mouseY);
         this.context.stroke();
 
