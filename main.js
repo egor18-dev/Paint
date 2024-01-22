@@ -71,6 +71,11 @@ class PhotoDAW {
                 this.option = btn.textContent;
                 this.changeText();
 
+                if(this.option.toLowerCase() == "netejar"){
+                    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    this.elements = [];
+                }
+
                 btns.forEach((tempBtn, tempIndex) => {
                     tempBtn.classList = index == tempIndex ? 'btn active' : 'btn';
                 });
@@ -85,7 +90,6 @@ class PhotoDAW {
             this.y = e.y;
 
             if(this.option.toLowerCase() == 'punts') this.drawPoint(this.x, this.y);
-
         });
 
         this.canvas.addEventListener('mouseup', () => {
@@ -148,10 +152,14 @@ class PhotoDAW {
     }
     
 
-    drawPoint(x, y){
+    drawPoint(startX, startY){
+        const canvasRect = this.canvas.getBoundingClientRect();
+        const adjustedStartX = startX - canvasRect.left;
+        const adjustedStartY = startY - canvasRect.top;
+
         this.context.beginPath();
-        this.context.arc(this.x, this.y, this.radious, 0, Math.PI * 2);
-        this.context.setLineDash([x, y]);
+        this.context.arc(adjustedStartX, adjustedStartY, this.radious, 0, Math.PI * 2);
+        this.context.setLineDash([0, 0]);
         this.context.fillStyle = "#000";
         this.context.fill();
     }
