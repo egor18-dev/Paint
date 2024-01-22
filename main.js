@@ -164,6 +164,9 @@ class PhotoDAW {
     }
 
     drawCircle(color, startX, startY, endX, endY, background, repeat) {
+        this.context.beginPath();
+        this.context.moveTo(startX, startY);
+        this.context.lineWidth = 2;
         const canvasRect = this.canvas.getBoundingClientRect();
 
         const adjustedStartX = startX - canvasRect.left;
