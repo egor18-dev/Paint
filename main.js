@@ -26,9 +26,9 @@ class PhotoDAW {
         this.createElement('button', 'btn active', this.buttons, 'Linea');
         this.createElement('button', 'btn', this.buttons, 'Cercle');
         this.createElement('button', 'btn', this.buttons, 'Netejar');
-        this.createElement('input', 'input', this.buttons, '', 'color', 'colorPicker'); 
+        this.createElement('input', 'input', this.buttons, '', 'color', 'idPicker'); 
         this.createElement('span', 'text', this.buttons, ' Gruix: ', '');
-        this.createElement('input', 'input', this.buttons, '', 'range', 'thickness');  
+        this.createElement('input', 'input', this.buttons, '', 'range', 'idRange');  
         this.listeners();
         this.elements = [];
     }
@@ -53,8 +53,8 @@ class PhotoDAW {
 
     listeners() {
         const btns = document.querySelectorAll('button');
-        const colorPicker = document.getElementById('colorPicker');
-        const thicknessInput = document.getElementById('thickness');
+        const colorPicker = document.getElementById('idPicker');
+        const thicknessInput = document.getElementById('idRange');
 
         colorPicker.addEventListener('input', (e) => {
             this.strokeStyle = e.target.value; 
@@ -178,14 +178,14 @@ class PhotoDAW {
         this.context.strokeStyle = color;
         this.context.fillStyle = color;
     
-        if (repeat) this.redraw(); // Redibujar antes de dibujar el círculo
+        if (repeat) this.redraw();
     
         this.context.beginPath();
         this.context.setLineDash(background ? [0, 0] : [3, 8]);
         this.context.arc(adjustedStartX, adjustedStartY, radius, 0, Math.PI * 2);
     
-        this.context.stroke(); // Dibujar el contorno del círculo
-        this.context.fill(); // Rellenar el círculo
+        this.context.stroke();
+        this.context.fill(); 
     }
     
 
