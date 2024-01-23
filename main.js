@@ -165,27 +165,29 @@ class PhotoDAW {
 
     drawCircle(color, startX, startY, endX, endY, background, repeat) {
         this.context.beginPath();
-        this.context.moveTo(startX, startY);
-        this.context.lineWidth = 2;
         const canvasRect = this.canvas.getBoundingClientRect();
-
+    
         const adjustedStartX = startX - canvasRect.left;
         const adjustedStartY = startY - canvasRect.top;
         const adjustedEndX = endX - canvasRect.left;
         const adjustedEndY = endY - canvasRect.top;
-
+    
         const radius = Math.sqrt(Math.pow(adjustedEndX - adjustedStartX, 2) + Math.pow(adjustedEndY - adjustedStartY, 2));
-
+    
+        this.context.lineWidth = 2;
         this.context.strokeStyle = color;
         this.context.fillStyle = color;
-
+    
+        if (repeat) this.redraw(); // Redibujar antes de dibujar el círculo
+    
         this.context.beginPath();
         this.context.setLineDash(background ? [0, 0] : [3, 8]);
-        if (repeat) this.redraw();
-        this.context.arc(adjustedStartX, adjustedStartY, radius, Math.PI * 2, 0);
-
-        this.context.fill();
+        this.context.arc(adjustedStartX, adjustedStartY, radius, 0, Math.PI * 2);
+    
+        this.context.stroke(); // Dibujar el contorno del círculo
+        this.context.fill(); // Rellenar el círculo
     }
+    
 
     redraw() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
