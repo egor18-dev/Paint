@@ -34,3 +34,12 @@ p{
     background-color: #000;
     color: #fff;
 }
+
+.radious{
+    display: none;
+    align-items: center;
+}
+
+.radious p{
+    margin-right: 15px;
+}
