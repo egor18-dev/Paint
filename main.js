@@ -43,6 +43,16 @@ class PhotoDAW {
         this.pointValue = 10;
     }
 
+    drawText() {
+        const endX = this.canvas.width - 50;
+        const endY = this.canvas.height - 15;
+        this.context.textAlign = "center";
+
+        this.context.font = "10pt Verdana";
+        this.context.fillStyle = "#000";
+        this.context.fillText(`[${this.clientX}, ${this.clientY}]`, endX, endY);
+    }
+
     changeText() {
         const p = document.querySelectorAll('p');
         p[0].innerHTML = `OnClick: ${this.option}`;
@@ -50,9 +60,9 @@ class PhotoDAW {
         p[2].innerHTML = "Radi punt";
     }
 
-    setValues () {
+    setValues() {
         const value = 10;
-        
+
         document.querySelectorAll('option').forEach((elem, index) => {
             const actualValue = (value * (index + 1));
             elem.innerHTML = actualValue;
@@ -101,13 +111,13 @@ class PhotoDAW {
                     this.elements = [];
                 }
 
-                document.querySelector('.radious').style.display = this.option.toLowerCase() == "punts" ? "flex" : "none"; 
+                document.querySelector('.radious').style.display = this.option.toLowerCase() == "punts" ? "flex" : "none";
 
-                if(this.option.toLowerCase() == "punts")
+                if (this.option.toLowerCase() == "punts")
 
-                btns.forEach((tempBtn, tempIndex) => {
-                    tempBtn.classList = index == tempIndex ? 'btn' : 'btn';
-                });
+                    btns.forEach((tempBtn, tempIndex) => {
+                        tempBtn.classList = index == tempIndex ? 'btn' : 'btn';
+                    });
             });
         });
 
@@ -139,6 +149,10 @@ class PhotoDAW {
         });
 
         this.canvas.addEventListener('mousemove', (e) => {
+            
+            this.redraw();
+            this.drawText();
+
             this.clientX = e.clientX;
             this.clientY = e.clientY;
 
